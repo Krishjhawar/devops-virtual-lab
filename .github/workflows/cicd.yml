@@ -10,22 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-
-      - name: Deploy to EC2
-        run: |
-          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-          cd ~/devops-virtual-lab/app
-          docker build -t devops-lab-app .
-          docker save devops-lab-app > devops-lab-app.tar
-          sudo /usr/local/bin/k3s ctr images import devops-lab-app.tar
-          kubectl rollout restart deployment devops-app
-          EOF
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/devops-virtual-lab/app
+            docker build -t devops-lab-app .
+            docker save devops-lab-app > devops-lab-app.tar
+            sudo /usr/local/bin/k3s ctr images import devops-lab-app.tar
+            kubectl rollout restart deployment devops-app
