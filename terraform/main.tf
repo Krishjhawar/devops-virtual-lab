@@ -1,16 +1,13 @@
-terraform {
-  required_providers {
-    null = {
-      source = "hashicorp/null"
-      version = "3.2.1"
-    }
-  }
+provider "aws" {
+  region = "us-east-1"
 }
 
-provider "null" {}
+resource "aws_instance" "devops_server" {
+  ami           = "ami-0c02fb55956c7d316"
+  instance_type = "t3.micro"
+  key_name      = "vle5-key"
 
-resource "null_resource" "devops_example" {
-  provisioner "local-exec" {
-    command = "echo DevOps Terraform setup complete"
+  tags = {
+    Name = "DevOps-Lab-Server"
   }
 }

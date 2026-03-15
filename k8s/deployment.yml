@@ -13,7 +13,8 @@ spec:
         app: devops
     spec:
       containers:
-      - name: devops-container
-        image: nginx
-        ports:
-        - containerPort: 80
+        - name: devops-container
+          image: devops-lab-app
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
