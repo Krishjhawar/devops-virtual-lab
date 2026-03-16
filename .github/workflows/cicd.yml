@@ -24,4 +24,4 @@ jobs:
             docker build -t devops-lab-app .
             docker save devops-lab-app > devops-lab-app.tar
             sudo /usr/local/bin/k3s ctr images import devops-lab-app.tar
-            kubectl rollout restart deployment devops-app
+            sudo KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl rollout restart deployment devops-app
