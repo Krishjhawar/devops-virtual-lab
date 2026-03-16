@@ -20,8 +20,10 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd ~/devops-virtual-lab/app
-            docker build -t devops-lab-app .
+            cd ~/devops-virtual-lab
+            git pull origin main
+            cd app
+            docker build --no-cache -t devops-lab-app .
             docker save devops-lab-app > devops-lab-app.tar
             sudo /usr/local/bin/k3s ctr images import devops-lab-app.tar
-            sudo KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl rollout restart deployment devops-app
+            sudo KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl delete pods -all
